@@ -5,7 +5,8 @@ import axios from "axios";
 import {useDarkMode} from './hooks/UseDarkMode'
 import Charts from "./components/Charts";
 import Navbar from "./components/Navbar";
-import {BrowserRouter as Router} from 'react-router-dom'
+import CryptoChart from './components/CryptoChart'
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Dropdown from './components/Dropdown'
 
 import "./styles.scss";
@@ -13,6 +14,8 @@ import "./styles.scss";
 const App = () => {
   const [coinData, setCoinData] = useState([]);
   const [darkmode] = useDarkMode("Dark Mode", false);
+  const [coin, setCoin] = useState('')
+  const [valueChange, setValueChange] = useState()
   useEffect(() => {
     axios
       .get(
@@ -24,8 +27,16 @@ const App = () => {
   return (
     <div className={darkmode ? "dark-mode App" : "App"}>
       <Navbar />
-      <Dropdown coinData={coinData}/>
-      <Charts coinData={coinData} />
+      <Dropdown coinData={coinData} setValueChange={setValueChange}/>
+
+      <Switch>
+        <Route path='/:coinName'>
+          <CryptoChart coinData={coinData} setCoin={setCoin} coin={coin} valueChange={valueChange}/>
+        </Route>
+        <Route path='/'>
+          <Charts coinData={coinData} />
+        </Route>
+      </Switch>
     </div>
   );
 };
